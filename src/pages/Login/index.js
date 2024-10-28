@@ -1,11 +1,23 @@
 import './index.scss'
-import { Card, Form, Input, Button } from 'antd'
+import { Card, Form, Input, Button, message } from 'antd'
 import logo from '@/assets/logo.png'
+import { useDispatch } from 'react-redux'
+import { fetchLogin } from '@/store/modules/user'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
 
-  const onFinish = (values) => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const onFinish = async(values) => {
     console.log(values);
+    // 写完了异步请求，接受到返回的token。需要在组件中触发刚写完的异步请求，才能真正send
+    // 触发异步action fetchLogin，用dispatch方法，但组件中使用dispatch方法，要使用钩子函数useDispatch
+    await dispatch(fetchLogin(values))
+    // 1. 登录完毕需要跳转到首页去
+    navigate('/')
+    // 2. 提示用户当前登录是否成功
+    message.success('登录成功')
   }
 
   return (
