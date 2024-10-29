@@ -63,6 +63,7 @@ const Publish = () => {
   // 上传回调
   const [imageList, setImageList] = useState([])
   const onChange = (value) => {
+
     console.log('正在上传中', value)
     setImageList(value.fileList)
   }
