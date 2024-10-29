@@ -18,6 +18,9 @@ const BarChart = ({ title }) => {
     const option = {
       title: {
         text: title
+
+
+        
       },
       xAxis: {
         type: 'category',

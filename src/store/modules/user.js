@@ -43,7 +43,7 @@ const fetchLogin = (loginForm)=>{
         const response = await loginAPI(loginForm)
         // 2. 提交同步action进行token的存入
         dispatch(setToken(response.data.token))
-    }
+    } 
 }
 
 // 获取个人用户信息异步方法
