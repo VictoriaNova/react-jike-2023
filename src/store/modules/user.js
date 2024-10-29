@@ -1,14 +1,15 @@
 // 放置和用户相关的状态管理
 
-import { createSlice } from "@reduxjs/toolkit";
-import { request } from "@/utils";
-import { setToken as _setToken, getToken, removeToken } from "@/utils";
+import { createSlice } from '@reduxjs/toolkit'
+import { setToken as _setToken, getToken, removeToken } from '@/utils'
+import { loginAPI, getProfileAPI } from '@/apis/user'
 
 const userStore = createSlice({
     name: "user",
     // 声明数据状态，后端返回来是什么类型，token初始就做响应调整
     initialState:{
-        token: getToken() || ''
+        token: getToken() || '',
+        userInfo: {}
     },
     // 同步的修改方法
     reducers: {
@@ -16,13 +17,21 @@ const userStore = createSlice({
             state.token = action.payload
             // localStorage也存一份
             _setToken(action.payload)
+        },
+        setUserInfo (state, action) {
+          state.userInfo = action.payload
+        },
+        clearUserInfo (state) {
+          state.token = ''
+          state.userInfo = {}
+          removeToken()
         }
     }
 })
 
 
 // 解构出actionCreater，解构出setToken方法。actioncreater小函数会按照按需导出
-const { setToken } = userStore.actions
+const { setToken, setUserInfo, clearUserInfo } = userStore.actions
 
 // 还需要得到当前模块的reducer函数。userreducer一会要在index里做组合，所以默认导出
 const userReducer = userStore.reducer
@@ -31,13 +40,22 @@ const userReducer = userStore.reducer
 const fetchLogin = (loginForm)=>{
     return async (dispatch)=>{
         // 1. 发送异步请求
-        const response = await request.post('/authorizations', loginForm)
+        const response = await loginAPI(loginForm)
         // 2. 提交同步action进行token的存入
         dispatch(setToken(response.data.token))
     }
 }
 
-export { fetchLogin, setToken }
+// 获取个人用户信息异步方法
+const fetchUserInfo = () => {
+    return async (dispatch) => {
+      const res = await getProfileAPI()
+      dispatch(setUserInfo(res.data))
+    }
+  }
+
+export { fetchLogin, fetchUserInfo, clearUserInfo }
 
 export default userReducer
+
 
